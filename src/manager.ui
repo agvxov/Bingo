@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Manager</class>
+ <widget class="QMainWindow" name="Manager">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>516</width>
+    <height>619</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>516</width>
+    <height>0</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>516</width>
+    <height>16777215</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>Kollekció</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">QPushButton#save_button{
+	color: rgb(255, 255, 255);
+	background-color: rgb(38, 162, 105);
+}
+QPushButton#delete_button{
+	color: rgb(255, 255, 255);
+	background: rgb(165, 29, 45);
+}
+QPushButton#new{
+	color: rgb(255, 255, 255);
+	background-color: rgb(26, 95, 180);
+}
+QPushButton#reload{
+	color: rgb(255, 255, 255);
+	background-color: rgb(229, 165, 10);
+}
+QPushButton#clear{
+	color: rgb(255, 255, 255);
+	background-color: rgb(165, 29, 45);
+}</string>
+  </property>
+  <widget class="QTableWidget" name="table">
+   <property name="verticalScrollBarPolicy">
+    <enum>Qt::ScrollBarAlwaysOn</enum>
+   </property>
+   <property name="horizontalScrollBarPolicy">
+    <enum>Qt::ScrollBarAlwaysOff</enum>
+   </property>
+   <property name="autoScroll">
+    <bool>false</bool>
+   </property>
+   <property name="wordWrap">
+    <bool>false</bool>
+   </property>
+   <attribute name="verticalHeaderVisible">
+    <bool>false</bool>
+   </attribute>
+   <column>
+    <property name="text">
+     <string>Id</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>Név</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>Leírás</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>Nyers adat</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>Törlés</string>
+    </property>
+   </column>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
