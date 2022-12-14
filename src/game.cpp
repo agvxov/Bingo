@@ -160,63 +160,113 @@ void Game::render(){
 
 #define CHECK_WON if(is_won){ goto WON; }; \
     is_won = true
-
 void Game::check_victory(){
-	static int ticked = 0;
-	
-    QPushButton *s = qobject_cast<QPushButton*>(sender());
-    // Find in grid
+    bool is_won;
+
     for(int i = 0; i < BINGO_N; i++){
+        // --- vertical
         for(int h = 0; h < BINGO_N; h++){
-            auto& b = this->bingo_grid[i][h];
-            if(b != s){ continue; }
-			b->isChecked() ? ++ticked : --ticked;
-			if(ticked < BINGO_N){ goto NOT_WON; }
-            // Check affected lines
-            // --- vertical
-            bool is_won = true;
-            for(int j = 0; j < BINGO_N; j++){
-                if(not this->bingo_grid[j][h]->isChecked()){
-                    is_won = false;
-                    break;
-                }
+            is_won = true;
+            if(not this->bingo_grid[i][h]->isChecked()){
+                is_won = false;
+                break;
             }
-            CHECK_WON;
-            // --- horizontal
-            for(int j = 0; j < BINGO_N; j++){
-                if(not this->bingo_grid[i][j]->isChecked()){
-                    is_won = false;
-                    break;
-                }
+        }
+        CHECK_WON;
+        // --- horizontal
+        for(int h = 0; h < BINGO_N; h++){
+            is_won = true;
+            if(not this->bingo_grid[h][i]->isChecked()){
+                is_won = false;
+                break;
             }
-            CHECK_WON;
-            // --- increasing diagonal
-            if(i != h){ continue; }
-            for(int j = 0; j < BINGO_N; j++){
-                if(not this->bingo_grid[j][j]->isChecked()){
-                    is_won = false;
-                    break;
-                }
-            }
-            CHECK_WON;
-            // --- decreasig diagonal
-            if(BINGO_N-1 - i != h){ continue; }
-            for(int j = 0; j < BINGO_N; j++){
-                if(not this->bingo_grid[BINGO_N-1-j][j]->isChecked()){
-                    is_won = false;
-                    break;
-                }
-            }
-            CHECK_WON;
+        }
+        CHECK_WON;
+    }
+    // --- increasing diagonal
+    for(int j = 0; j < BINGO_N; j++){
+        if(not this->bingo_grid[j][j]->isChecked()){
+            is_won = false;
+            break;
         }
     }
+    CHECK_WON;
+    // --- decreasig diagonal
+    for(int j = 0; j < BINGO_N; j++){
+        if(not this->bingo_grid[BINGO_N-1-j][j]->isChecked()){
+            is_won = false;
+            break;
+        }
+    }
+    CHECK_WON;
 
-	NOT_WON:
-		this->current_game->is_won = false;
-		ui->title->setStyleSheet("");
-		return;
+    this->current_game->is_won = false;
+    ui->title->setStyleSheet("");
+    return;
 
     WON:
-		this->current_game->is_won = true;
+        this->current_game->is_won = true;
         ui->title->setStyleSheet("color: rgb(38, 162, 105);");
 }
+
+// WIP OPTIMIZED VERSION
+//void Game::check_victory(){
+//    static int ticked = 0;
+//    static int n_is_won = 0;
+//
+//    QPushButton *s = qobject_cast<QPushButton*>(sender());
+//    // Find in grid
+//    for(int i = 0; i < BINGO_N; i++){
+//        for(int h = 0; h < BINGO_N; h++){
+//            auto& b = this->bingo_grid[i][h];
+//            if(b != s){ continue; }
+//			b->isChecked() ? ++ticked : --ticked;
+//			if(ticked < BINGO_N){ goto NOT_WON; }
+//            // Check affected lines
+//            // --- vertical
+//            bool is_won = true;
+//            for(int j = 0; j < BINGO_N; j++){
+//                if(not this->bingo_grid[j][h]->isChecked()){
+//                    is_won = false;
+//                    break;
+//                }
+//            }
+//            CHECK_WON;
+//            // --- horizontal
+//            for(int j = 0; j < BINGO_N; j++){
+//                if(not this->bingo_grid[i][j]->isChecked()){
+//                    is_won = false;
+//                    break;
+//                }
+//            }
+//            CHECK_WON;
+//            // --- increasing diagonal
+//            if(i != h){ continue; }
+//            for(int j = 0; j < BINGO_N; j++){
+//                if(not this->bingo_grid[j][j]->isChecked()){
+//                    is_won = false;
+//                    break;
+//                }
+//            }
+//            CHECK_WON;
+//            // --- decreasig diagonal
+//            if(BINGO_N-1 - i != h){ continue; }
+//            for(int j = 0; j < BINGO_N; j++){
+//                if(not this->bingo_grid[BINGO_N-1-j][j]->isChecked()){
+//                    is_won = false;
+//                    break;
+//                }
+//            }
+//            CHECK_WON;
+//        }
+//    }
+//
+//	NOT_WON:
+//		this->current_game->is_won = false;
+//		ui->title->setStyleSheet("");
+//		return;
+//
+//    WON:
+//		this->current_game->is_won = true;
+//        ui->title->setStyleSheet("color: rgb(38, 162, 105);");
+//}
