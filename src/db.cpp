@@ -2,12 +2,12 @@
 
 #include <iostream>
 
+static int db_init_();
 
 inline sqlite3* db;
-inline int db_init = sqlite3_open(db_file, &db);
+inline int db_init = db_init_();
 inline std::vector<bingo_struct*> db_data;
 inline std::vector<game_struct*> games;
-
 
 bool db_read(){
     return db_read_collection() and db_read_games();
@@ -81,6 +81,12 @@ bool db_read_games(){
 	if(not(exec == SQLITE_OK || exec == SQLITE_DONE)){ goto ERROR; } \
 }
 
+#define LABEL_ERR \
+    ERROR: \
+        fprintf(stderr, "%d: %s\n", exec, sqlite3_errmsg(db)); \
+        sqlite3_exec(db, "ROLLBACK;", NULL, NULL, NULL); \
+        return false
+
 bool db_write_collection(){
 	int exec;
 	sqlite3_stmt *stmt;
@@ -107,10 +113,7 @@ bool db_write_collection(){
 
 	return true;
 
-	ERROR:
-        fprintf(stderr, "%d: %s\n", exec, sqlite3_errmsg(db));
-		sqlite3_exec(db, "ROLLBACK;", NULL, NULL, NULL);
-		return false;
+    LABEL_ERR;
 }
 
 bool db_write_games(){
@@ -140,12 +143,23 @@ bool db_write_games(){
 
 	return true;
 
-	ERROR:
-        fprintf(stderr, "%d: %s\n", exec, sqlite3_errmsg(db));
-		sqlite3_exec(db, "ROLLBACK;", NULL, NULL, NULL);
-		return false;
+    LABEL_ERR;
 }
 
 bool db_write(){
 	return db_write_collection() and db_write_games();
+}
+
+static int db_init_(){
+    static constexpr char create_statements[] = "\
+            CREATE TABLE IF NOT EXISTS bingos (name text, desc text, data text); \
+            CREATE TABLE IF NOT EXISTS games(bingo_id int, is_won bool, hits integer(4), start int, end int); \
+    ";
+    int exec;
+    CHECK_ERR(sqlite3_open(db_file, &db));
+    CHECK_ERR(sqlite3_exec(db, create_statements, NULL, NULL, NULL));
+
+    return 0;
+
+    LABEL_ERR;
 }
